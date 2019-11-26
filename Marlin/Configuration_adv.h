@@ -1259,7 +1259,7 @@
   #endif
 
   // Use a smaller font when labels don't fit buttons
-  #define TOUCH_UI_FIT_TEXT
+  //#define TOUCH_UI_FIT_TEXT
 
   // Allow language selection from menu at run-time (otherwise use LCD_LANGUAGE)
   //#define LCD_LANGUAGE_1 en

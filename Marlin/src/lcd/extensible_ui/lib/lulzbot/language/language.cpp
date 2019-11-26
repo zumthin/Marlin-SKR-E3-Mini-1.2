@@ -24,4 +24,4 @@
 
 #include "language.h"
 
-uint8_t lang = 0;
+//uint8_t lang = 0;
