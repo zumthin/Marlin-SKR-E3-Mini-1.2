@@ -30,8 +30,6 @@
 
 #include "../../MarlinCore.h" // for startOrResumeJob
 
-#include "../../Marlin.h" // for startOrResumeJob
-
 /**
  * M32: Select file and start SD Print
  *
