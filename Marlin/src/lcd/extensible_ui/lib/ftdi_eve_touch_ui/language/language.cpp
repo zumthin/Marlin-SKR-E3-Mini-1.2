@@ -20,8 +20,8 @@
  ****************************************************************************/
 
 
-#include "../../../../../Marlin.h"
+#include "../../../../../MarlinCore.h"
 
 #include "language.h"
 
-uint8_t lang = 0;
+//uint8_t lang = 0;
