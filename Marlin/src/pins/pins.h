@@ -105,7 +105,7 @@
 #elif MB(BAM_DICE_DUE)
   #include "ramps/pins_BAM_DICE_DUE.h"          // ATmega1280, ATmega2560                 env:megaatmega1280 env:megaatmega2560
 #elif MB(MKS_BASE)
-  #include "ramps/pins_MKS_BASE.h"              // ATmega1280, ATmega2560                 env:megaatmega1280 env:megaatmega2560
+  #include "ramps/pins_MKS_BASE_10.h"           // ATmega1280, ATmega2560                 env:megaatmega1280 env:megaatmega2560
 #elif MB(MKS_BASE_14)
   #include "ramps/pins_MKS_BASE_14.h"           // ATmega2560                             env:megaatmega2560
 #elif MB(MKS_BASE_15)
@@ -577,6 +577,13 @@
   #include "esp32/pins_MRR_ESPE.h"              // ESP32                                  env:esp32
 #elif MB(E4D_BOX)
   #include "esp32/pins_E4D.h"                   // ESP32                                  env:esp32
+
+//
+// Adafruit Grand Central M4 (SAMD51 ARM Cortex-M4)
+//
+
+#elif MB(AGCM4_RAMPS_144)
+  #include "samd/pins_RAMPS_144.h"              // SAMD51                                 env:SAMD51_grandcentral_m4
 
 //
 // Linux Native Debug board
@@ -1189,18 +1196,12 @@
 #define _PEXI(p,q) __PEXI(p,q)
 #define __EPIN(p,q) E##p##_##q##_PIN
 #define _EPIN(p,q) __EPIN(p,q)
-#define __EDRV(p) E##p##_DRIVER_TYPE
-#define _EDRV(p) __EDRV(p)
 #define DIAG_REMAPPED(p,q) (PIN_EXISTS(q) && _EPIN(p##_E_INDEX, DIAG) == q##_PIN)
 
 // The X2 axis, if any, should be the next open extruder port
 #define X2_E_INDEX E_STEPPERS
 
 #if EITHER(DUAL_X_CARRIAGE, X_DUAL_STEPPER_DRIVERS)
-  #ifndef X2_DRIVER_TYPE
-    #define X2_DRIVER_TYPE _EDRV(X2_E_INDEX)
-  #endif
-
   #ifndef X2_STEP_PIN
     #define X2_STEP_PIN   _EPIN(X2_E_INDEX, STEP)
     #define X2_DIR_PIN    _EPIN(X2_E_INDEX, DIR)
@@ -1287,10 +1288,6 @@
 
 // The Y2 axis, if any, should be the next open extruder port
 #if ENABLED(Y_DUAL_STEPPER_DRIVERS)
-  #ifndef Y2_DRIVER_TYPE
-    #define Y2_DRIVER_TYPE _EDRV(Y2_E_INDEX)
-  #endif
-
   #ifndef Y2_STEP_PIN
     #define Y2_STEP_PIN   _EPIN(Y2_E_INDEX, STEP)
     #define Y2_DIR_PIN    _EPIN(Y2_E_INDEX, DIR)
@@ -1359,10 +1356,6 @@
 
 // The Z2 axis, if any, should be the next open extruder port
 #if NUM_Z_STEPPER_DRIVERS >= 2
-  #ifndef Z2_DRIVER_TYPE
-    #define Z2_DRIVER_TYPE _EDRV(Z2_E_INDEX)
-  #endif
-
   #ifndef Z2_STEP_PIN
     #define Z2_STEP_PIN   _EPIN(Z2_E_INDEX, STEP)
     #define Z2_DIR_PIN    _EPIN(Z2_E_INDEX, DIR)
@@ -1430,10 +1423,6 @@
 #endif
 
 #if NUM_Z_STEPPER_DRIVERS >= 3
-  #ifndef Z3_DRIVER_TYPE
-    #define Z3_DRIVER_TYPE _EDRV(Z3_E_INDEX)
-  #endif
-
   #ifndef Z3_STEP_PIN
     #define Z3_STEP_PIN   _EPIN(Z3_E_INDEX, STEP)
     #define Z3_DIR_PIN    _EPIN(Z3_E_INDEX, DIR)
@@ -1501,10 +1490,6 @@
 #endif
 
 #if NUM_Z_STEPPER_DRIVERS >= 4
-  #ifndef Z4_DRIVER_TYPE
-    #define Z4_DRIVER_TYPE _EDRV(Z4_E_INDEX)
-  #endif
-
   #ifndef Z4_STEP_PIN
     #define Z4_STEP_PIN   _EPIN(Z4_E_INDEX, STEP)
     #define Z4_DIR_PIN    _EPIN(Z4_E_INDEX, DIR)

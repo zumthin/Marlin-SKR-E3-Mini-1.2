@@ -677,6 +677,11 @@
 #define X_DRIVER_TYPE  TMC2209
 #define Y_DRIVER_TYPE  TMC2209
 #define Z_DRIVER_TYPE  TMC2209
+//#define X2_DRIVER_TYPE A4988
+//#define Y2_DRIVER_TYPE A4988
+//#define Z2_DRIVER_TYPE A4988
+//#define Z3_DRIVER_TYPE A4988
+//#define Z4_DRIVER_TYPE A4988
 #define E0_DRIVER_TYPE TMC2209
 //#define E1_DRIVER_TYPE A4988
 //#define E2_DRIVER_TYPE A4988
@@ -945,6 +950,7 @@
  *
  * Specify a Probe position as { X, Y, Z }
  */
+
 #define NOZZLE_TO_PROBE_OFFSET {53, -9, -1.000 }
 
 // Most probes should stay away from the edges of the bed, but

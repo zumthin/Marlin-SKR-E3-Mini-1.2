@@ -1227,6 +1227,10 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
     #error "Z_PROBE_LOW_POINT must be less than or equal to 0."
   #endif
 
+  #if HOMING_Z_WITH_PROBE && IS_CARTESIAN && DISABLED(Z_SAFE_HOMING)
+    #error "Z_SAFE_HOMING is recommended when homing with a probe. Enable it or comment out this line to continue."
+  #endif
+
 #else
 
   /**
@@ -1357,14 +1361,9 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  * Make sure Z_SAFE_HOMING point is reachable
  */
 #if ENABLED(Z_SAFE_HOMING)
-  #if HAS_BED_PROBE && (ENABLED(DELTA) || IS_SCARA)
-    static_assert(WITHIN(Z_SAFE_HOMING_X_POINT, PROBE_X_MIN, PROBE_X_MAX), "Z_SAFE_HOMING_X_POINT is outside the probe region.");
-    static_assert(WITHIN(Z_SAFE_HOMING_Y_POINT, PROBE_Y_MIN, PROBE_Y_MAX), "Z_SAFE_HOMING_Y_POINT is outside the probe region.");
-  #else
-    static_assert(WITHIN(Z_SAFE_HOMING_X_POINT, X_MIN_POS, X_MAX_POS), "Z_SAFE_HOMING_X_POINT can't be reached by the nozzle.");
-    static_assert(WITHIN(Z_SAFE_HOMING_Y_POINT, Y_MIN_POS, Y_MAX_POS), "Z_SAFE_HOMING_Y_POINT can't be reached by the nozzle.");
-  #endif
-#endif // Z_SAFE_HOMING
+  static_assert(WITHIN(Z_SAFE_HOMING_X_POINT, X_MIN_BED, X_MAX_BED), "Z_SAFE_HOMING_X_POINT can't be reached by the nozzle.");
+  static_assert(WITHIN(Z_SAFE_HOMING_Y_POINT, Y_MIN_BED, Y_MAX_BED), "Z_SAFE_HOMING_Y_POINT can't be reached by the nozzle.");
+#endif
 
 /**
  * Make sure DISABLE_[XYZ] compatible with selected homing options
@@ -2041,62 +2040,6 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 #endif
 
 /**
- * Make sure CoolStep settings exist
- */
-#if HAS_COOLSTEP
-  #define NEEDS_COOLSTEP(A) AXIS_HAS_COOLSTEP(A) && !(defined(A##_COOLSTEP_SPEED_THRESHOLD) && defined(A##_COOLSTEP_LOWER_LOAD_THRESHOLD) && defined(A##_COOLSTEP_UPPER_LOAD_THRESHOLD) && defined(A##_COOLSTEP_SEUP) && defined(A##_COOLSTEP_SEDN) && defined(A##_COOLSTEP_SEIMIN))
-  #if NEEDS_COOLSTEP(X)
-    #error "X COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(X2)
-    #error "X2 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Y)
-    #error "Y COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Y2)
-    #error "Y2 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Z)
-    #error "Z COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Z2)
-    #error "Z2 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Z3)
-    #error "Z3 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(Z4)
-    #error "Z4 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E0)
-    #error "E0 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E1)
-    #error "E1 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E2)
-    #error "E2 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E3)
-    #error "E3 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E4)
-    #error "E4 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E5)
-    #error "E5 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E6)
-    #error "E6 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #if NEEDS_COOLSTEP(E7)
-    #error "E7 COOLSTEP settings must be defined in Configuration_adv.h."
-  #endif
-  #undef NEEDS_COOLSTEP
-#endif
-
-/**
  * Check existing CS pins against enabled TMC SPI drivers.
  */
 #define INVALID_TMC_SPI(ST) (AXIS_HAS_SPI(ST) && !PIN_EXISTS(ST##_CS))
@@ -2295,11 +2238,11 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 
 // Sensorless homing is required for both combined steppers in an H-bot
 #if CORE_IS_XY && X_SENSORLESS != Y_SENSORLESS
-  #error "CoreXY requires both X and Y to use sensorless homing if either does."
-#elif CORE_IS_XZ && X_SENSORLESS != Z_SENSORLESS
-  #error "CoreXZ requires both X and Z to use sensorless homing if either does."
-#elif CORE_IS_YZ && Y_SENSORLESS != Z_SENSORLESS
-  #error "CoreYZ requires both Y and Z to use sensorless homing if either does."
+  #error "CoreXY requires both X and Y to use sensorless homing if either one does."
+#elif CORE_IS_XZ && X_SENSORLESS != Z_SENSORLESS && !HOMING_Z_WITH_PROBE
+  #error "CoreXZ requires both X and Z to use sensorless homing if either one does."
+#elif CORE_IS_YZ && Y_SENSORLESS != Z_SENSORLESS && !HOMING_Z_WITH_PROBE
+  #error "CoreYZ requires both Y and Z to use sensorless homing if either one does."
 #endif
 
 // Other TMC feature requirements
